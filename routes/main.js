@@ -7,12 +7,12 @@ router.get("/", (req, res) => {
   const query = req.query;
   console.log("frozen : " + query.frozen); // 냉장: frozen = 0/ 냉동: frozen = 1
 
-  Ingredient.find({ frozen: query.frozen }, function (err, ings) {
+  Ingredient.find(function (err, ings) {
     if (err) {
       return res.status(500).send({ error: err.message });
     }
     res.status(200).json(ings);
-  }).select("ing_name ing_img ing_expir");
+  }).select("ing_id ing_name ing_img ing_expir");
 });
 
 // 재료 생성
