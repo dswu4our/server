@@ -1,4 +1,3 @@
-// 재료 인식 결과
 // camera.js
 const router = require("express").Router();
 const path = require("path");
