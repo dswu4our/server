@@ -6,50 +6,51 @@ const { spawn } = require("child_process"); // 파이썬 호출
 // var models = require("../models");
 const multer = require("multer");
 const multerS3 = require("multer-s3");
-const aws = require("aws-sdk");
+
 var formidable = require("formidable");
-aws.config.loadFromPath(__dirname + "/../config/awsconfig.json");
+// config 파일 저장안해서 일단 주석처리
+// const aws = require("aws-sdk");
+// aws.config.loadFromPath(__dirname + "/../config/awsconfig.json");
 
-const s3 = new aws.S3();
+// const s3 = new aws.S3(); // var Op = models.Sequelize.Op;
 
-// var Op = models.Sequelize.Op;
-var fs = require("fs");
+// var fs = require("fs");
 
-var storage = multerS3({
-  //s3
-  s3: s3,
-  bucket: "cf-templates-1lknv6o2cultk-ap-northeast-2",
-  acl: "public-read",
-  key: function (req, file, cb) {
-    let extension = path.extname(file.originalname);
-    cb(null, Date.now().toString() + extension);
-  },
-});
-var upload = multer({ storage: storage });
+// var storage = multerS3({
+//   //s3
+//   s3: s3,
+//   bucket: "cf-templates-1lknv6o2cultk-ap-northeast-2",
+//   acl: "public-read",
+//   key: function (req, file, cb) {
+//     let extension = path.extname(file.originalname);
+//     cb(null, Date.now().toString() + extension);
+//   },
+// });
+// var upload = multer({ storage: storage });
 
-// s3에 이미지 업로드
-router.get("/upload", async (req, res) => {
-  res.render("upload.html");
-});
+// // s3에 이미지 업로드
+// router.get("/upload", async (req, res) => {
+//   res.render("upload.html");
+// });
 
-router.post("/upload", upload.single("imgFile"), async (req, res) => {
-  try {
-    res.send({
-      //파일 정보 넘김
-      message: "upload success",
-      status: "success",
-      data: {
-        file: req.file,
-      },
-    });
-  } catch (err) {
-    //무언가 문제가 생김
-    res.send({
-      message: "ERROR",
-      status: "fail",
-    });
-  }
-});
+// router.post("/upload", upload.single("imgFile"), async (req, res) => {
+//   try {
+//     res.send({
+//       //파일 정보 넘김
+//       message: "upload success",
+//       status: "success",
+//       data: {
+//         file: req.file,
+//       },
+//     });
+//   } catch (err) {
+//     //무언가 문제가 생김
+//     res.send({
+//       message: "ERROR",
+//       status: "fail",
+//     });
+//   }
+// });
 
 // 플라스크 서버의 api를 호출하여 그 결과를 받아 다시 프론트에 넘겨주는 코드
 router.post("/", async (req, res) => {
