@@ -18,6 +18,7 @@ router.get("/", (req, res) => {
     .select("ings_id recipe_id recipe_name");
 });
 
+//db.receipes.findOne({'ing_id': {$regex: "^박력분"}});
 // 유투브 영상 리스트
 
 // 유투브 영상으로 넘겨주기
