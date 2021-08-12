@@ -12,7 +12,9 @@ const bodyParser = require("body-parser");
 // var formidable = require("formidable");
 // config 파일 저장안해서 일단 주석처리
 const aws = require("aws-sdk");
-aws.config.loadFromPath(__dirname + "/../config/awsconfig.json");
+const dirpath = path.join(__dirname, "/awsconfig.json");
+// aws.config.loadFromPath(__dirname + "/../config/awsconfig.json");
+aws.config.loadFromPath(dirpath);
 
 const s3 = new aws.S3(); // var Op = models.Sequelize.Op;
 
