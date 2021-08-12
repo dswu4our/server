@@ -12,7 +12,7 @@ const bodyParser = require("body-parser");
 // var formidable = require("formidable");
 // config 파일 저장안해서 일단 주석처리
 const aws = require("aws-sdk");
-const dirpath = path.join(__dirname, "../config/awsconfig.json");
+const dirpath = path.join(__dirname, "/../config/awsconfig.json");
 // aws.config.loadFromPath(__dirname + "/../config/awsconfig.json");
 aws.config.loadFromPath(dirpath);
 
