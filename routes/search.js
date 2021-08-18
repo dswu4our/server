@@ -6,12 +6,12 @@ const Users_Ingredients = require("../models/users_ingredients");
 
 // 재료 검색
 router.get("/", (req, res) => {
-  const body = req.body;
-  console.log(body.ing_name);
+  const query = req.query;
+  console.log(query.name);
 
   Ingredient.find(
     {
-      ing_name: body.ing_name,
+      ing_name: query.name,
     },
     function (err, ings) {
       if (err) {
@@ -33,6 +33,7 @@ router.post("/", (req, res) => {
     ing_expir: body.ing_expir,
   };
 
+  // 중복되는 건 생성이 안되는듯
   Users_Ingredients.create(ing, function (err, result) {
     if (err) throw err;
     console.log("inserted");

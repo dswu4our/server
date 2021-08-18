@@ -5,14 +5,24 @@ const Ingredient = require("../models/ingredients");
 // 나의 재료 보여주기
 router.get("/", (req, res) => {
   const query = req.query;
-  // console.log("frozen" : " + query.frozen); // 냉장: frozen = 0/ 냉동: frozen = 1
+  console.log("User name : " + query.user_id);
 
-  // Ingredient.find(function (err, ings) {
-  //   if (err) {
-  //     return res.status(500).send({ error: err.message });
-  //   }
-  //   res.status(200).json(ings);
-  // }).select("ing_id name img");
+  Users_Ingredients.find(
+    {
+      user_id: query.user_id,
+      ing_frozen: query.ing_frozen,
+    },
+    function (err, ing_id) {
+      if (err) {
+        return res.status(500).send({ error: err.message });
+      }
+      res.status(200).json(ing_id);
+    }
+  ).select("ing_name ing_expir ing_img");
+});
+
+// ingredients DB 재료 모두 보여주기
+router.get("/all", (req, res) => {
   Ingredient.find(function (err, ings) {
     if (err) return res.status(500).send({ error: "db failure" });
     res.json(ings);
