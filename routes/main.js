@@ -1,6 +1,7 @@
+// main.js
 const router = require("express").Router();
-// const ingredients = require('../models/ingredients');
 const Ingredient = require("../models/ingredients");
+const Users_Ingredients = require("../models/users_ingredients");
 
 // 나의 재료 보여주기
 router.get("/", (req, res) => {
