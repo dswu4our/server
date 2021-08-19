@@ -39,5 +39,6 @@ app.use("/main", require("./routes/main"));
 app.use("/camera", require("./routes/camera"));
 app.use("/search", require("./routes/search"));
 app.use("/cook", require("./routes/cook"));
+app.use("/login", require("./routes/login"));
 
 app.listen(port, () => console.log(`Server listening on port ${port}`));
