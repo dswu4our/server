@@ -10,6 +10,7 @@ const users_ingredientsSchema = new mongoose.Schema(
     ing_name: { type: String },
     ing_frozen: { type: Number },
     ing_expir: { type: Date },
+    check: { type: Number },
   },
   {
     timestamps: false,

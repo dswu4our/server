@@ -108,7 +108,20 @@ const bodyParser = require("body-parser");
 //   //   });
 // });
 
+//재료 인식 리스트 => check가 1인것만 불러오기 = 카메라로 재료 인식한애들은 무조건 check가 1임
+router.get("/list", async (req, res) => {
+  const query = req.query;
+  Users_Ingredients.find(
+    { user_id: query.user_id, check: 1 },
+    function (err, result) {
+      if (err) return res.status(500).send({ error: err.message });
+      res.status(200).json(result);
+    }
+  ).select("ing_name ing_frozen ing_expir ing_img");
+});
+
 // 재료 인식 결과 추가하기
+// check를 0으로 해야 냉장고로 들어감
 router.post("/list", async (req, res) => {
   const body = req.body;
   console.log(body);
@@ -119,6 +132,7 @@ router.post("/list", async (req, res) => {
       ing_name: body[i].ing_name,
       ing_frozen: body[i].ing_frozen,
       ing_expir: body[i].ing_expir,
+      check: 0,
     };
     list.push(li);
   }
@@ -130,8 +144,4 @@ router.post("/list", async (req, res) => {
   res.json("success");
 });
 
-// 재료 인식 리스트
-// router.get("/list", async (req, res) => {
-//   const list = req.list;
-// });
 module.exports = router;

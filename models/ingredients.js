@@ -5,7 +5,7 @@ const ingredientSchema = new mongoose.Schema(
   {
     ing_id: { type: Number, required: true },
     ing_name: { type: String, required: true },
-    ing_photo: { type: String },
+    img: { type: String },
   },
   {
     timestamps: true,
