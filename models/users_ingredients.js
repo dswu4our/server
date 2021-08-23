@@ -1,3 +1,4 @@
+const { ObjectId } = require("mongodb");
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const ingredients = require("../models/ingredients");
@@ -15,8 +16,7 @@ const users_ingredientsSchema = new mongoose.Schema(
     check: { type: Number },
   },
   {
-    timestamps: false,
-    versionKey: false,
+    timestamps: true,
   }
 );
 
