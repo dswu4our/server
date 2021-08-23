@@ -1,30 +1,46 @@
 const router = require("express").Router();
 // const ingredients = require('../models/ingredients');
 const Ingredient = require("../models/ingredients");
+const Users_Ingredients = require("../models/users_ingredients");
 
 // 나의 재료 보여주기
 router.get("/", (req, res) => {
   const query = req.query;
-  console.log("frozen : " + query.frozen); // 냉장: frozen = 0/ 냉동: frozen = 1
+  console.log("User name : " + query.user_id);
 
-  Ingredient.find(function (err, ings) {
-    if (err) {
-      return res.status(500).send({ error: err.message });
+  Users_Ingredients.find(
+    {
+      user_id: query.user_id,
+      ing_frozen: query.ing_frozen,
+      check: query.check
+    },
+    function (err, ing_id) {
+      if (err) {
+        return res.status(500).send({ error: err.message });
+      }
+      res.status(200).json(ing_id);
     }
-    res.status(200).json(ings);
-  }).select("ing_id ing_name ing_img ing_expir");
+  ).select("ing_name ing_expir ing_img");
+});
+
+// ingredients DB 재료 모두 보여주기
+router.get("/all", (req, res) => {
+  Ingredient.find(function (err, ings) {
+    if (err) return res.status(500).send({ error: "db failure" });
+    res.json(ings);
+  });
 });
 
 // 재료 생성
-router.post("/", (req, res) => {
-  const ing = new Ingredient(req.body);
-  ing.save((error, ingreInfo) => {
-    if (error) return res.json({ success: false, error });
-    return res.status(200).json({
-      success: true,
-    });
-  });
-});
+// router.post("/", (req, res) => {
+//   const ing = new Ingredient(req.body);
+//   ing.save((error, ingreInfo) => {
+//     if (error) return res.json({ success: false, error });
+//     return res.status(200).json({
+//       success: true,
+//     });
+//   });
+// });
 
 // 삭제
 router.delete("/", (req, res) => {

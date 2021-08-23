@@ -1,13 +1,12 @@
+const { ObjectId } = require("mongodb");
 const mongoose = require("mongoose");
+var Schema = mongoose.Schema;
 
 // Define Schemes
 const ingredientSchema = new mongoose.Schema(
   {
-    ing_id: { type: Number, required: true },
     ing_name: { type: String, required: true },
-    ing_img: { type: String },
-    ing_expir: { type: Date },
-    frozen: { type: Number },
+    ing_img: { type: String, required: true }
   },
   {
     timestamps: true,
