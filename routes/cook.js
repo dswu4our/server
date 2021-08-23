@@ -4,12 +4,11 @@ const Users_Recipes = require("../models/users_recipes");
 const Recipe = require("../models/recipes");
 
 const { response } = require("express");
-
 var Youtube = require("youtube-node");
 var youtube = new Youtube();
 
 // 요리하기
-router.get("/", (req, res) => {
+router.post("/", (req, res) => {
   // 요리할 식재료 체크한거 배열로 가져와서
   const array = req.body;
   console.log("ings_name: " + array.ings_name);
@@ -24,9 +23,9 @@ router.get("/", (req, res) => {
     }
     res.status(200).json(results);
   }).select("ings_name recipe_name");
+
 });
 
-//db.receipes.findOne({'ing_id': {$regex: "^박력분"}});
 // 유투브 영상 리스트
 // 재료 선택 -> 요리하기 
 router.post("/", (req, res) => {

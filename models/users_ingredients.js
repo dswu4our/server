@@ -1,3 +1,4 @@
+
 const { ObjectId } = require("mongodb");
 const mongoose = require("mongoose");
 var Schema = mongoose.Schema;
@@ -26,16 +27,3 @@ const users_ingredientsSchema = new mongoose.Schema(
 // Create Model & Export
 module.exports = mongoose.model("Users_Ingredients", users_ingredientsSchema);
 
-/*const refrigeratorSchema = new mongoose.Schema(
-  {
-    ref_id: { type: Number, required: true, unique: true },
-    user_id: { type: Number, required: true },
-    ing_id: { type: Number, required: true },
-  },
-  {
-    timestamps: true,
-  }
-);
-
-// Create Model & Export
-module.exports = mongoose.model("Refrigerator", refrigeratorSchema);*/

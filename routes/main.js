@@ -1,5 +1,5 @@
+// main.js
 const router = require("express").Router();
-// const ingredients = require('../models/ingredients');
 const Ingredient = require("../models/ingredients");
 const Users_Ingredients = require("../models/users_ingredients");
 
