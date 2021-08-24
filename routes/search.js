@@ -37,56 +37,41 @@ router.get("/list", async (req, res) => {
 // 재료 검색한것 DB 추가
 router.post("/list", (req, res) => {
   const body = req.body;
-  var IngId;
   var list = [];
-  // Ingredient.findOne({ ing_name: body[i].ing_name })
-  //   .select("_id")
-  //   .exec((err, data) => {
-  //     IngId = new mongoose.Types.ObjectId(data._id);
-  //     console.log(IngId);
-  //   });
+  // 객체 만들기
   for (var i = 0; i < body.length; i++) {
-    let li = {
+    var li = Users_Ingredients({
       user_id: body[i].user_id,
       ing_frozen: body[i].ing_frozen,
       ing_expir: body[i].ing_expir,
-      // check: 0,
-    };
+    });
     list.push(li);
   }
   console.log(list);
-  for (var i = 0; i < body.length; i++) {
-    // let ingObj = li.ing;
-    // let users_ingObj = li; //let savedIngObj =
-    Ingredient.findOne({ ing_name: body[i].ing_name })
+  // console.log(i)
+  var l = 0; var b = 0;
+  // ing의 id 찾아서 Users_Ingredients 객체의 ing에 삽입
+  for (var n = 0; n < body.length; n++) {
+    Ingredient.findOne({ ing_name: body[b++].ing_name })
       .select("_id")
       .exec((err, data) => {
         if (err) throw err;
-        let ui = Users_Ingredients({
-          user_id: list[i].user_id,
-          ing_frozen: list[i].ing_frozen,
-          ing_expir: list[i].ing_expir,
-          check: 0,
-          ing: data,
+        console.log(data)
+        console.log("l: " + l + " n:" + n)
+        
+        Users_Ingredients.create({
+          "user_id": list[l].user_id,
+      "ing_frozen": list[l].ing_frozen,
+      "ing_expir": list[l++].ing_expir,
+      "check": 0,
+      "ing": data
+        }, function (err, result) {
+          if (err) throw err;
+          console.log("inserted");
         });
-        ui.save((err, result) => {
-          console.log("save");
-          console.log(result);
-        });
-        // IngId = new mongoose.Types.ObjectId(data._id);
-        // // savedIngObj._id = new mongoose.Types.ObjectId(savedIngObj._id);
-        // console.log("savedingobj:" + IngId);
-        // users_ingObj.ing = IngId;
       });
-    // list.push(li);
   }
-  // console.log(list);
-  // Users_Ingredients.insertMany(list, function (err, result) {
-  //   if (err) throw err;
-  //   // console.log(result);
-  //   res.json("success");
-  // });
-  res.json("success");
+  res.status(200).json("success");
 });
 
 module.exports = router;
