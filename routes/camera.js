@@ -115,7 +115,7 @@ router.get("/list", async (req, res) => {
   const query = req.query;
   Users_Ingredients.find({ user_id: query.user_id, check: 1 })
     .populate("ing")
-    .select("ing_name ing_frozen ing_expir img")
+    .select("ing_name ing_frozen ing_expir ing_img")
     .exec((err, data) => {
       console.log(data);
       res.status(200).json(data);
