@@ -1,7 +1,7 @@
 // camera.js
 const mongoose = require("mongoose");
 const router = require("express").Router();
-const Users_Ingredients = require("../models/users_ingredients");
+
 const path = require("path");
 var request = require("request");
 const { spawn } = require("child_process"); // 파이썬 호출
@@ -9,6 +9,8 @@ const { spawn } = require("child_process"); // 파이썬 호출
 const multer = require("multer");
 const multerS3 = require("multer-s3");
 const bodyParser = require("body-parser");
+const Ingredient = require("../models/ingredients");
+const Users_Ingredients = require("../models/users_ingredients");
 // var formidable = require("formidable");
 // config 파일 저장안해서 일단 주석처리
 // const aws = require("aws-sdk");
@@ -111,37 +113,58 @@ const bodyParser = require("body-parser");
 //재료 인식 리스트 => check가 1인것만 불러오기 = 카메라로 재료 인식한애들은 무조건 check가 1임
 router.get("/list", async (req, res) => {
   const query = req.query;
-  Users_Ingredients.find(
-    { user_id: query.user_id, check: 1 },
-    function (err, result) {
-      if (err) return res.status(500).send({ error: err.message });
-      res.status(200).json(result);
-    }
-  ).select("ing_name ing_frozen ing_expir ing_img");
+  Users_Ingredients.find({ user_id: query.user_id, check: 1 })
+    .populate("ing")
+    .select("ing_name ing_frozen ing_expir img")
+    .exec((err, data) => {
+      console.log(data);
+      res.status(200).json(data);
+    });
 });
 
 // 재료 인식 결과 추가하기
 // check를 0으로 해야 냉장고로 들어감
 router.post("/list", async (req, res) => {
   const body = req.body;
-  console.log(body);
   var list = [];
+  // 객체 만들기
   for (var i = 0; i < body.length; i++) {
-    const li = {
+    var li = Users_Ingredients({
       user_id: body[i].user_id,
-      ing_name: body[i].ing_name,
       ing_frozen: body[i].ing_frozen,
       ing_expir: body[i].ing_expir,
-      check: 0,
-    };
+    });
     list.push(li);
   }
-  Users_Ingredients.insertMany(list, function (err, result) {
-    if (err) throw err;
-    console.log("inserted");
-    return;
-  });
-  res.json("success");
+  console.log(list);
+  // console.log(i)
+  var l = 0;
+  var b = 0;
+  // ing의 id 찾아서 Users_Ingredients 객체의 ing에 삽입
+  for (var n = 0; n < body.length; n++) {
+    Ingredient.findOne({ ing_name: body[b++].ing_name })
+      .select("_id")
+      .exec((err, data) => {
+        if (err) throw err;
+        console.log(data);
+        console.log("l: " + l + " n:" + n);
+
+        Users_Ingredients.create(
+          {
+            user_id: list[l].user_id,
+            ing_frozen: list[l].ing_frozen,
+            ing_expir: list[l++].ing_expir,
+            check: 0,
+            ing: data,
+          },
+          function (err, result) {
+            if (err) throw err;
+            console.log("inserted");
+          }
+        );
+      });
+  }
+  res.status(200).json("success");
 });
 
 module.exports = router;

@@ -49,26 +49,30 @@ router.post("/list", (req, res) => {
   }
   console.log(list);
   // console.log(i)
-  var l = 0; var b = 0;
+  var l = 0;
+  var b = 0;
   // ing의 id 찾아서 Users_Ingredients 객체의 ing에 삽입
   for (var n = 0; n < body.length; n++) {
     Ingredient.findOne({ ing_name: body[b++].ing_name })
       .select("_id")
       .exec((err, data) => {
         if (err) throw err;
-        console.log(data)
-        console.log("l: " + l + " n:" + n)
-        
-        Users_Ingredients.create({
-          "user_id": list[l].user_id,
-      "ing_frozen": list[l].ing_frozen,
-      "ing_expir": list[l++].ing_expir,
-      "check": 0,
-      "ing": data
-        }, function (err, result) {
-          if (err) throw err;
-          console.log("inserted");
-        });
+        console.log(data);
+        console.log("l: " + l + " n:" + n);
+
+        Users_Ingredients.create(
+          {
+            user_id: list[l].user_id,
+            ing_frozen: list[l].ing_frozen,
+            ing_expir: list[l++].ing_expir,
+            check: 0,
+            ing: data,
+          },
+          function (err, result) {
+            if (err) throw err;
+            console.log("inserted");
+          }
+        );
       });
   }
   res.status(200).json("success");
