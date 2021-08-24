@@ -46,6 +46,6 @@ app.use("/main", require("./routes/main"));
 app.use("/cook", require("./routes/cook"));
 app.use("/manage", require("./routes/manage"));
 app.use("/mypage", require("./routes/mypage"));
-//app.use("/camera", require("./routes/camera"));
-
+app.use("/camera", require("./routes/camera"));
+app.use("/search", require("./routes/search"));
 app.listen(port, () => console.log(`Server listening on port ${port}`));
