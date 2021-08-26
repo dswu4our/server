@@ -10,31 +10,54 @@ var youtube = new Youtube();
 // 요리하기
   router.post("/", (req, res) => {
     const body = req.body;
-    console.log("ings_name: " + body.ings_name);
+    // console.log("ings_name: " + body.ings_name);
 
+    // 배열에 식재료 넣기
     var arr = [];
     for (var i = 0; i < body.ings_name.length; i++) {
       arr.push(body.ings_name[i]);
     }
+    // console.log(i);
     if (i > 10) return res.json("식재료의 개수가 초과되었습니다.");
 
     // 해당 모든 재료로 만들수 있는 레시피 검색
     var count = 0;
-    Recipe
+    // var rec_arr = [];
+    while (count < 10 && arr.length > 0){
+      Recipe
       .find(
         {
-          ings_name: { $all:arr },
-          //ings_name: { $all: arr },
+          ings_name: { $all : arr },
         },
         function (err, results) {
           if (err) {
             return res.status(500).send({ error: err.message });
           }
-          res.status(200).json(results);
+          count = count+ results.length;
+          var rec_arr = await recipefind();
+          console.log("count: " + count);
+          rec_arr.push(results);
+          console.log("rec_arr: " + rec_arr);
+          // console.log("result: " + results);
+          // res.status(200).json(results);
         })
       .where("ings_name").in(arr)
-      .limit(100) // 레시피 개수 10개 제한
+      .limit(10) // 레시피 개수 10개 제한
       .select("recipe_name");
+      // .exec((err, response) => {
+      //   count = count+ response.length;
+      //   console.log("count: " + count);
+      //   rec_arr.push(response);
+      //   console.log("rec_arr: " + rec_arr);
+
+      // 왜 동시에 실행됨??
+ // 배열의 식재료 하나 줄이기
+ if (arr.length > 0)
+ {arr.pop();
+ console.log("pop arr: " + arr);}
+    }
+    res.status(200).json(rec_arr);
+    // res.render('main', {rec_arr})
   });
 
 // 유투브 영상 리스트
