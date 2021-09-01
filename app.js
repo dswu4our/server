@@ -9,17 +9,17 @@ const bodyParser = require("body-parser");
 const app = express();
 const port = process.env.PORT || 4500;
 
-const { Ingredient } = require('./models/ingredients');
-const { User } = require('./models/users');
-const { Users_Ingredients } = require('./models/users_ingredients');
-const { Recipe } = require('./models/recipes');
-const { Users_Reicpes } = require('./models/users_recipes');
-const { Users_Baskets} = require('./models/users_baskets');
+const { Ingredient } = require("./models/ingredients");
+const { User } = require("./models/users");
+const { Users_Ingredients } = require("./models/users_ingredients");
+const { Recipe } = require("./models/recipes");
+const { Users_Reicpes } = require("./models/users_recipes");
+const { Users_Baskets } = require("./models/users_baskets");
 
 // s3 업로드 되는지 확인하기위한 추가 코드
-/*app.set("views", __dirname + "/views");
+app.set("views", __dirname + "/views");
 app.set("view engine", "ejs");
-app.engine("html", require("ejs").renderFile);*/
+app.engine("html", require("ejs").renderFile);
 
 // static file service
 app.use(express.static("public"));

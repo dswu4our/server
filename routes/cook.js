@@ -7,61 +7,8 @@ const { response } = require("express");
 var Youtube = require("youtube-node");
 var youtube = new Youtube();
 
-// 요리하기
-  router.post("/", (req, res) => {
-    const body = req.body;
-    // console.log("ings_name: " + body.ings_name);
-
-    // 배열에 식재료 넣기
-    var arr = [];
-    for (var i = 0; i < body.ings_name.length; i++) {
-      arr.push(body.ings_name[i]);
-    }
-    // console.log(i);
-    if (i > 10) return res.json("식재료의 개수가 초과되었습니다.");
-
-    // 해당 모든 재료로 만들수 있는 레시피 검색
-    var count = 0;
-    // var rec_arr = [];
-    while (count < 10 && arr.length > 0){
-      Recipe
-      .find(
-        {
-          ings_name: { $all : arr },
-        },
-        function (err, results) {
-          if (err) {
-            return res.status(500).send({ error: err.message });
-          }
-          count = count+ results.length;
-          var rec_arr = await recipefind();
-          console.log("count: " + count);
-          rec_arr.push(results);
-          console.log("rec_arr: " + rec_arr);
-          // console.log("result: " + results);
-          // res.status(200).json(results);
-        })
-      .where("ings_name").in(arr)
-      .limit(10) // 레시피 개수 10개 제한
-      .select("recipe_name");
-      // .exec((err, response) => {
-      //   count = count+ response.length;
-      //   console.log("count: " + count);
-      //   rec_arr.push(response);
-      //   console.log("rec_arr: " + rec_arr);
-
-      // 왜 동시에 실행됨??
- // 배열의 식재료 하나 줄이기
- if (arr.length > 0)
- {arr.pop();
- console.log("pop arr: " + arr);}
-    }
-    res.status(200).json(rec_arr);
-    // res.render('main', {rec_arr})
-  });
-
 // 유투브 영상 리스트
-// 재료 선택 -> 요리하기 
+// 재료 선택 -> 요리하기
 /*router.post("/", (req, res) => {
   const body = req.body;
 
@@ -79,8 +26,7 @@ var youtube = new Youtube();
     }).select("recipe_name");
   }); */
 
-
- // [유투브 영상으로 넘겨주기]
+// [유투브 영상으로 넘겨주기]
 router.post("/cook", (req, res) => {
   const body = req.body;
   //var word = req.body; // 검색어 지정
@@ -102,22 +48,20 @@ router.post("/cook", (req, res) => {
       console.log(err);
       return;
     } // 에러일 경우 에러공지하고 빠져나감
-      console.log("URL : " + url);
-      console.log("-----------");
+    console.log("URL : " + url);
+    console.log("-----------");
   });
-    
-    res.end(url);
 
-    // 해당 유저가 본 레시피 체크 (users_recipes의 recipe_check=1)
-    var myquery = { recipe_check: 0 };
-    var newvalues = { $set: {recipe_check: 1} };
+  res.end(url);
 
-    Users_Recipes.updateOne(myquery, newvalues, function(err, res) {
+  // 해당 유저가 본 레시피 체크 (users_recipes의 recipe_check=1)
+  var myquery = { recipe_check: 0 };
+  var newvalues = { $set: { recipe_check: 1 } };
 
-      if (err) throw err;
-      console.log("1 document 수정 완료.");
-  
-    });
+  Users_Recipes.updateOne(myquery, newvalues, function (err, res) {
+    if (err) throw err;
+    console.log("1 document 수정 완료.");
   });
+});
 
 module.exports = router;
