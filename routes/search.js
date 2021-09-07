@@ -11,7 +11,7 @@ router.get("/", (req, res) => {
   console.log(query.name);
   Ingredient.find(
     {
-      ing_name: query.name,
+      ing_name: new RegExp(query.name),
     },
     function (err, ings) {
       if (err) {
