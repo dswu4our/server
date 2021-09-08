@@ -23,7 +23,7 @@ router.get("/", (req, res) => {
         return res.status(500).send({ error: err.message });
       }
       res.status(200).json(results);
-    }).select("email name");
+    }).select("email name user_id");
   });
 
 // 요리내역
