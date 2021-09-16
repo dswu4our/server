@@ -34,6 +34,20 @@ router.get("/list", async (req, res) => {
     });
 });
 
+router.delete("/list", async (req, res) => {
+  const query = req.query;
+  const body = req.body;
+  Users_Ingredients.remove({
+    user_id: query.user_id,
+    ing_name: body.ing_name,
+    check: 2,
+    list: 0
+  }, function(err, result){
+    if(err) return res.status(500).json({error: err.message});
+    res.status(200).json(result);
+  })
+});
+
 // 재료 검색한것 DB 추가
 router.post("/list", (req, res) => {
   const body = req.body;
@@ -66,6 +80,7 @@ router.post("/list", (req, res) => {
             ing_frozen: list[l].ing_frozen,
             ing_expir: list[l++].ing_expir,
             check: 0,
+            list: 1,
             ing: data,
           },
           function (err, result) {
