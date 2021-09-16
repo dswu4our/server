@@ -27,7 +27,7 @@ router.get("/list", async (req, res) => {
   const query = req.query;
   Users_Ingredients.find({ user_id: query.user_id, check: 2 })
     .populate("ing")
-    .select("ing_name ing_frozen ing_expir ing_img list")
+    .select("ing_name ing_frozen ing_expir ing_img")
     .exec((err, data) => {
       console.log(data);
       res.status(200).json(data);
@@ -37,14 +37,21 @@ router.get("/list", async (req, res) => {
 router.delete("/list", async (req, res) => {
   const query = req.query;
   const body = req.body;
-  Users_Ingredients.remove({
-    user_id: query.user_id,
-    ing_name: body.ing_name,
-    check: 2,
-    list: 0
-  }, function(err, result){
-    if(err) return res.status(500).json({error: err.message});
-    res.status(200).json(result);
+  
+  Ingredient.findOne({ ing_name: body.ing_name })
+  .select("_id")
+  .exec((err, data) => {
+    if (err) throw err;
+    console.log(data);
+    Users_Ingredients.deleteMany({
+      user_id: query.user_id,
+      ing: data,
+      check: 2,
+    }, function(err, result){
+      if(err) return res.status(500).json({error: err.message});
+      console.log("deleted");
+      res.status(200).json(result);
+    })
   })
 });
 
@@ -80,7 +87,6 @@ router.post("/list", (req, res) => {
             ing_frozen: list[l].ing_frozen,
             ing_expir: list[l++].ing_expir,
             check: 0,
-            list: 1,
             ing: data,
           },
           function (err, result) {
@@ -106,7 +112,7 @@ router.post("/", (req, res) => {
     });
     list.push(li);
   }
-  console.log(list);
+  // console.log(list);
   // console.log(i)
   var l = 0;
   var b = 0;
@@ -117,7 +123,7 @@ router.post("/", (req, res) => {
       .exec((err, data) => {
         if (err) throw err;
         console.log(data);
-        console.log("l: " + l + " n:" + n);
+        // console.log("l: " + l + " n:" + n);
 
         Users_Ingredients.create(
           {
@@ -125,7 +131,6 @@ router.post("/", (req, res) => {
             ing_frozen: list[l].ing_frozen,
             ing_expir: list[l++].ing_expir,
             check: 2,
-            list: 0,
             ing: data,
           },
           function (err, result) {

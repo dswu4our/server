@@ -16,12 +16,12 @@ router.get("/", (req, res) => {
     {
       user_id: query.user_id
     },
-    function (err, result) {
-      if (err) {
-        return res.status(500).send({ error: err.message });
-      }
-      // res.status(200).json(result);
-    }
+    // function (err, result) {
+    //   if (err) {
+    //     return res.status(500).send({ error: err.message });
+    //   }
+    //   // res.status(200).json(result);
+    // }
   ).populate("ing")
   .select("ing_name ing_expir")
   .exec((err, data) => {
