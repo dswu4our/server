@@ -27,7 +27,7 @@ router.get("/list", async (req, res) => {
   const query = req.query;
   Users_Ingredients.find({ user_id: query.user_id, check: 2 })
     .populate("ing")
-    .select("ing_name ing_frozen ing_expir ing_img")
+    .select("ing_name ing_frozen ing_expir ing_img list")
     .exec((err, data) => {
       console.log(data);
       res.status(200).json(data);
@@ -78,6 +78,7 @@ router.post("/list", (req, res) => {
   res.status(200).json("success");
 });
 
+// 2: 재료 검색한것 카드리스트로...
 router.post("/", (req, res) => {
   const body = req.body;
   var list = [];
@@ -109,6 +110,7 @@ router.post("/", (req, res) => {
             ing_frozen: list[l].ing_frozen,
             ing_expir: list[l++].ing_expir,
             check: 2,
+            list: 0,
             ing: data,
           },
           function (err, result) {

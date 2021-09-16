@@ -110,6 +110,23 @@ const Users_Ingredients = require("../models/users_ingredients");
 //   //   });
 // });
 
+// 저장하고 다른 재료 추가하기
+router.post("/add", async (req, res) => {
+  const query = req.query;
+  const body = req.body;
+
+  Users_Ingredients.create({
+    user_id: query.user_id,
+    ing_name: body.ing_name,
+    list: 0,
+    check: 1
+  }, function (err, result) {
+    if (err) throw err;
+    console.log("inserted");
+    res.status(200).json(result);
+  })
+})
+
 //재료 인식 리스트 => check가 1인것만 불러오기 = 카메라로 재료 인식한애들은 무조건 check가 1임
 router.get("/list", async (req, res) => {
   const query = req.query;
@@ -121,6 +138,21 @@ router.get("/list", async (req, res) => {
       res.status(200).json(data);
     });
 });
+
+// 재료 삭제하기
+router.delete("/list", async (req, res) => {
+  const query = req.query;
+  const body = req.body;
+  Users_Ingredients.remove({
+    user_id: query.user_id,
+    ing_name: body.ing_name,
+    check: 1,
+    list: 0
+  }, function(err, result){
+    if(err) return res.status(500).json({error: err.message});
+    res.status(200).json(result);
+  })
+})
 
 // 재료 인식 결과 추가하기
 // check를 0으로 해야 냉장고로 들어감

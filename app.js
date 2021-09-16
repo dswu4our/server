@@ -26,6 +26,13 @@ app.use(express.static("public"));
 // body-parser
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.user(express.json({
+  limit: "50mb"
+}));
+app.use(express.urlencoded({
+  limit:"50mb",
+  extended:false
+}));
 
 // Node의 native Promise 사용
 mongoose.Promise = global.Promise;
