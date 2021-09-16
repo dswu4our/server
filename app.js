@@ -26,7 +26,7 @@ app.use(express.static("public"));
 // body-parser
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.user(express.json({
+app.use(express.json({
   limit: "50mb"
 }));
 app.use(express.urlencoded({

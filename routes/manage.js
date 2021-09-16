@@ -10,19 +10,24 @@ const Users_Baskets = require("../models/users_baskets");
 // 관리페이지
 router.get("/", (req, res) => {
   const query = req.query;
-  console.log("User id : " + query.user_id);
+  // console.log("User id : " + query.user_id);
 
   Users_Ingredients.find(
     {
       user_id: query.user_id
     },
-    function (err, user_id) {
+    function (err, result) {
       if (err) {
         return res.status(500).send({ error: err.message });
       }
-      res.status(200).json(user_id);
+      // res.status(200).json(result);
     }
-  ).select("ing_name ing_expir");
+  ).populate("ing")
+  .select("ing_name ing_expir")
+  .exec((err, data) => {
+    console.log(data);
+    res.status(200).json(data);
+  });
 });
 
 // manage_edit_date
