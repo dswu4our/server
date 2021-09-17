@@ -38,21 +38,26 @@ router.delete("/list", async (req, res) => {
   const query = req.query;
   const body = req.body;
   
-  Ingredient.findOne({ ing_name: body.ing_name })
-  .select("_id")
-  .exec((err, data) => {
+  // Ingredient.findOne({ ing_name: body.ing_name })
+  // .select("_id")
+  // .exec((err, data) => {
+  //   if (err) throw err;
+  //   console.log(data);
+  //   Users_Ingredients.deleteMany({
+  //     user_id: query.user_id,
+  //     ing: data,
+  //     check: 2,
+  //   }, function(err, result){
+  //     if(err) return res.status(500).json({error: err.message});
+  //     console.log("deleted");
+  //     res.status(200).json(result);
+  //   })
+  // })
+  Users_Ingredients.findByIdAndDelete({_id: req.body._id}, function(err, result) {
     if (err) throw err;
-    console.log(data);
-    Users_Ingredients.deleteMany({
-      user_id: query.user_id,
-      ing: data,
-      check: 2,
-    }, function(err, result){
-      if(err) return res.status(500).json({error: err.message});
-      console.log("deleted");
-      res.status(200).json(result);
-    })
-  })
+    console.log("deleted");
+    res.status(200).json(result);
+  });
 });
 
 // 재료 검색한것 DB 추가

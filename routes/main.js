@@ -13,7 +13,7 @@ router.get("/", (req, res) => {
     {
       user_id: query.user_id,
       ing_frozen: query.ing_frozen,
-      check: query.check,
+      check: 0,
     },
     function (err, ing_id) {
       if (err) {
