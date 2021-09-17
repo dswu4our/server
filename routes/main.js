@@ -8,20 +8,29 @@ const Recipe = require("../models/recipes");
 router.get("/", (req, res) => {
   const query = req.query;
   console.log("User name : " + query.user_id);
-
+  var ids = [];
   Users_Ingredients.find(
     {
       user_id: query.user_id,
       ing_frozen: query.ing_frozen,
       check: 0,
-    },
-    function (err, ing_id) {
-      if (err) {
-        return res.status(500).send({ error: err.message });
-      }
-      res.status(200).json(ing_id);
-    }
-  ).select("ing_name ing_expir ing_img");
+    },)
+  .select("ing")
+  .exec((err, data) => {
+    if (err) throw err;
+    console.log(data);
+    for (var i = 0; i < data.length; i++)
+      ids.push(data[i].ing);
+    console.log(ids);
+    Ingredient.find()
+      .where("_id")
+      .in(ids)
+      .select("ing_name ing_expir ing_img")
+      .exec((err, result) => {
+        console.log(result);
+        res.status(200).json(result);
+    });
+  });
 });
 
 // 요리하기
