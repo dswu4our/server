@@ -54,11 +54,13 @@ router.delete("/list", async (req, res) => {
   //     res.status(200).json(result);
   //   })
   // })
-  Users_Ingredients.findByIdAndDelete({_id: req.body._id}, function(err, result) {
-    if (err) throw err;
-    console.log("deleted");
-    res.status(200).json(result);
-  });
+  if (req.body._id.match(/^[0-9a-fA-F]{24}$/)){
+    Users_Ingredients.findByIdAndDelete({_id: req.body._id}, function(err, result) {
+      if (err) throw err;
+      console.log("deleted");
+      res.status(200).json(result);
+    });
+  }
 });
 
 // 재료 검색한것 DB 추가
