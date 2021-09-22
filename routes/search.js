@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const Ingredient = require("../models/ingredients");
 const Users_Ingredients = require("../models/users_ingredients");
 
+
 // 재료 검색
 router.get("/", (req, res) => {
   const query = req.query;
@@ -63,45 +64,31 @@ router.delete("/list", async (req, res) => {
 // 재료 검색한것 DB 추가
 router.post("/list", (req, res) => {
   const body = req.body;
+  var ObjectId = require('mongodb').ObjectID;
   var list = [];
-  // 객체 만들기
-  for (var i = 0; i < body.length; i++) {
-    var li = Users_Ingredients({
-      user_id: body[i].user_id,
-      ing_frozen: body[i].ing_frozen,
-      ing_expir: body[i].ing_expir,
-    });
-    list.push(li);
-  }
-  console.log(list);
-  // console.log(i)
-  var l = 0;
-  var b = 0;
+  console.log(body);
+  // obj = ObjectId(body[0]._id);
+  // console.log(body[0]._id);
   // ing의 id 찾아서 Users_Ingredients 객체의 ing에 삽입
-  for (var n = 0; n < body.length; n++) {
-    Ingredient.findOne({ ing_name: body[b++].ing_name })
-      .select("_id")
-      .exec((err, data) => {
+  for (var l = 0; l < body.length; l++){
+    Users_Ingredients.updateOne(
+      {
+        _id: body[l]._id,
+        user_id: body[l].user_id,
+      },
+      {
+        $set: {
+        check: 0,
+        ing_frozen: body[l].ing_frozen,
+        ing_expir: body[l].ing_expir,
+      }
+      }, function(err, result) {
         if (err) throw err;
-        console.log(data);
-        console.log("l: " + l + " n:" + n);
-
-        Users_Ingredients.create(
-          {
-            user_id: list[l].user_id,
-            ing_frozen: list[l].ing_frozen,
-            ing_expir: list[l++].ing_expir,
-            check: 0,
-            ing: data,
-          },
-          function (err, result) {
-            if (err) throw err;
-            console.log("inserted");
-          }
-        );
-      });
+        console.log("update");
+      }
+    );
   }
-  res.status(200).json("success");
+  res.status(200).json("update success");
 });
 
 // 2: 재료 검색한것 카드리스트로...

@@ -9,19 +9,23 @@ router.get("/", (req, res) => {
   const query = req.query;
   console.log("User name : " + query.user_id);
   var ids = [];
+  var ex = [];
   Users_Ingredients.find(
     {
       user_id: query.user_id,
       ing_frozen: query.ing_frozen,
       check: 0,
     },)
-  .select("ing")
+  .select("ing_expir ing")
   .exec((err, data) => {
     if (err) throw err;
     console.log(data);
     for (var i = 0; i < data.length; i++)
       ids.push(data[i].ing);
+    for (var i = 0; i < data.length; i++)
+      ex.push(data[i].ing_expir);
     console.log(ids);
+    console.log(ex);
     Ingredient.find()
       .where("_id")
       .in(ids)
