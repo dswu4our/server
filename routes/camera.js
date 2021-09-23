@@ -112,19 +112,30 @@ const Users_Ingredients = require("../models/users_ingredients");
 
 // 저장하고 다른 재료 추가하기
 router.post("/add", async (req, res) => {
-  const query = req.query;
   const body = req.body;
 
-  Users_Ingredients.create({
-    user_id: query.user_id,
-    ing_name: body.ing_name,
-    list: 0,
-    check: 1
-  }, function (err, result) {
-    if (err) throw err;
-    console.log("inserted");
-    res.status(200).json(result);
-  })
+  Ingredient.findOne({ ing_name: body.ing_name })
+      .select("_id")
+      .exec((err, data) => {
+        if (err) throw err;
+        console.log(data);
+        // console.log("l: " + l + " n:" + n);
+
+        Users_Ingredients.create(
+          {
+            user_id: body.user_id,
+            ing_frozen: body.ing_frozen,
+            ing_expir: body.ing_expir,
+            check: 1,
+            ing: data,
+          },
+          function (err, result) {
+            if (err) throw err;
+            console.log("inserted");
+            res.status(200).json("inserted success");
+          }
+        );
+      });
 })
 
 //재료 인식 리스트 => check가 1인것만 불러오기 = 카메라로 재료 인식한애들은 무조건 check가 1임
@@ -141,17 +152,20 @@ router.get("/list", async (req, res) => {
 
 // 재료 삭제하기
 router.delete("/list", async (req, res) => {
-  const query = req.query;
-  const body = req.body;
-  Users_Ingredients.remove({
-    user_id: query.user_id,
-    ing_name: body.ing_name,
-    check: 1,
-    list: 0
-  }, function(err, result){
-    if(err) return res.status(500).json({error: err.message});
+  // Users_Ingredients.remove({
+  //   user_id: query.user_id,
+  //   ing_name: body.ing_name,
+  //   check: 1,
+  //   list: 0
+  // }, function(err, result){
+  //   if(err) return res.status(500).json({error: err.message});
+  //   res.status(200).json(result);
+  // })
+  Users_Ingredients.findByIdAndDelete({_id: req.body._id}, function(err, result) {
+    if (err) throw err;
+    console.log("deleted");
     res.status(200).json(result);
-  })
+  });
 })
 
 // 재료 인식 결과 추가하기
@@ -160,43 +174,61 @@ router.post("/list", async (req, res) => {
   const body = req.body;
   var list = [];
   // 객체 만들기
-  for (var i = 0; i < body.length; i++) {
-    var li = Users_Ingredients({
-      user_id: body[i].user_id,
-      ing_frozen: body[i].ing_frozen,
-      ing_expir: body[i].ing_expir,
-    });
-    list.push(li);
-  }
-  console.log(list);
-  // console.log(i)
-  var l = 0;
-  var b = 0;
-  // ing의 id 찾아서 Users_Ingredients 객체의 ing에 삽입
-  for (var n = 0; n < body.length; n++) {
-    Ingredient.findOne({ ing_name: body[b++].ing_name })
-      .select("_id")
-      .exec((err, data) => {
+  for (var l = 0; l < body.length; l++){
+    Users_Ingredients.updateOne(
+      {
+        _id: body[l]._id,
+        user_id: body[l].user_id,
+      },
+      {
+        $set: {
+        check: 0,
+        ing_frozen: body[l].ing_frozen,
+        ing_expir: body[l].ing_expir,
+      }
+      }, function(err, result) {
         if (err) throw err;
-        console.log(data);
-        console.log("l: " + l + " n:" + n);
-
-        Users_Ingredients.create(
-          {
-            user_id: list[l].user_id,
-            ing_frozen: list[l].ing_frozen,
-            ing_expir: list[l++].ing_expir,
-            check: 0,
-            ing: data,
-          },
-          function (err, result) {
-            if (err) throw err;
-            console.log("inserted");
-          }
-        );
-      });
+        console.log("update");
+      }
+    );
   }
-  res.status(200).json("success");
+  // for (var i = 0; i < body.length; i++) {
+  //   var li = Users_Ingredients({
+  //     user_id: body[i].user_id,
+  //     ing_frozen: body[i].ing_frozen,
+  //     ing_expir: body[i].ing_expir,
+  //   });
+  //   list.push(li);
+  // }
+  // console.log(list);
+  // // console.log(i)
+  // var l = 0;
+  // var b = 0;
+  // // ing의 id 찾아서 Users_Ingredients 객체의 ing에 삽입
+  // for (var n = 0; n < body.length; n++) {
+  //   Ingredient.findOne({ ing_name: body[b++].ing_name })
+  //     .select("_id")
+  //     .exec((err, data) => {
+  //       if (err) throw err;
+  //       console.log(data);
+  //       console.log("l: " + l + " n:" + n);
+
+  //       Users_Ingredients.create(
+  //         {
+  //           user_id: list[l].user_id,
+  //           ing_frozen: list[l].ing_frozen,
+  //           ing_expir: list[l++].ing_expir,
+  //           check: 0,
+  //           ing: data,
+  //         },
+  //         function (err, result) {
+  //           if (err) throw err;
+  //           console.log("inserted");
+  //         }
+  //       );
+  //     });
+  // }
+  res.status(200).json("update success");
 });
 
 module.exports = router;
