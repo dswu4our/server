@@ -115,28 +115,28 @@ router.post("/add", async (req, res) => {
   const body = req.body;
 
   Ingredient.findOne({ ing_name: body.ing_name })
-      .select("_id")
-      .exec((err, data) => {
-        if (err) throw err;
-        console.log(data);
-        // console.log("l: " + l + " n:" + n);
+    .select("_id")
+    .exec((err, data) => {
+      if (err) throw err;
+      console.log(data);
+      // console.log("l: " + l + " n:" + n);
 
-        Users_Ingredients.create(
-          {
-            user_id: body.user_id,
-            ing_frozen: body.ing_frozen,
-            ing_expir: body.ing_expir,
-            check: 1,
-            ing: data,
-          },
-          function (err, result) {
-            if (err) throw err;
-            console.log("inserted");
-            res.status(200).json("inserted success");
-          }
-        );
-      });
-})
+      Users_Ingredients.create(
+        {
+          user_id: body.user_id,
+          ing_frozen: body.ing_frozen,
+          ing_expir: body.ing_expir,
+          check: 1,
+          ing: data,
+        },
+        function (err, result) {
+          if (err) throw err;
+          console.log("inserted");
+          res.status(200).json("inserted success");
+        }
+      );
+    });
+});
 
 //재료 인식 리스트 => check가 1인것만 불러오기 = 카메라로 재료 인식한애들은 무조건 check가 1임
 router.get("/list", async (req, res) => {
@@ -152,21 +152,15 @@ router.get("/list", async (req, res) => {
 
 // 재료 삭제하기
 router.delete("/list", async (req, res) => {
-  // Users_Ingredients.remove({
-  //   user_id: query.user_id,
-  //   ing_name: body.ing_name,
-  //   check: 1,
-  //   list: 0
-  // }, function(err, result){
-  //   if(err) return res.status(500).json({error: err.message});
-  //   res.status(200).json(result);
-  // })
-  Users_Ingredients.findByIdAndDelete({_id: req.body._id}, function(err, result) {
-    if (err) throw err;
-    console.log("deleted");
-    res.status(200).json(result);
-  });
-})
+  Users_Ingredients.findByIdAndDelete(
+    { _id: req.body._id },
+    function (err, result) {
+      if (err) throw err;
+      console.log("deleted");
+      res.status(200).json(result);
+    }
+  );
+});
 
 // 재료 인식 결과 추가하기
 // check를 0으로 해야 냉장고로 들어감
@@ -174,7 +168,7 @@ router.post("/list", async (req, res) => {
   const body = req.body;
   var list = [];
   // 객체 만들기
-  for (var l = 0; l < body.length; l++){
+  for (var l = 0; l < body.length; l++) {
     Users_Ingredients.updateOne(
       {
         _id: body[l]._id,
@@ -182,11 +176,12 @@ router.post("/list", async (req, res) => {
       },
       {
         $set: {
-        check: 0,
-        ing_frozen: body[l].ing_frozen,
-        ing_expir: body[l].ing_expir,
-      }
-      }, function(err, result) {
+          check: 0,
+          ing_frozen: body[l].ing_frozen,
+          ing_expir: body[l].ing_expir,
+        },
+      },
+      function (err, result) {
         if (err) throw err;
         console.log("update");
       }

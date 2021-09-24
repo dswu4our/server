@@ -41,6 +41,18 @@ router.post("/", (req, res) => {
   );
 });
 
+// 삭제하기
+router.delete("/", (req, res) => {
+  Users_Ingredients.findByIdAndDelete(
+    { _id: req.body._id },
+    function (err, result) {
+      if (err) throw err;
+      console.log("deleted");
+      res.status(200).json(result);
+    }
+  );
+});
+
 // 기한초과
 router.get("/manageover", (req, res) => {
   const query = req.query;
