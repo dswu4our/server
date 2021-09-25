@@ -153,21 +153,15 @@ router.get("/list", async (req, res) => {
 
 // 재료 삭제하기
 router.delete("/list", async (req, res) => {
-  // Users_Ingredients.remove({
-  //   user_id: query.user_id,
-  //   ing_name: body.ing_name,
-  //   check: 1,
-  //   list: 0
-  // }, function(err, result){
-  //   if(err) return res.status(500).json({error: err.message});
-  //   res.status(200).json(result);
-  // })
-  Users_Ingredients.findByIdAndDelete({_id: req.body._id}, function(err, result) {
-    if (err) throw err;
-    console.log("deleted");
-    res.status(200).json(result);
-  });
-})
+  Users_Ingredients.findByIdAndDelete(
+    { _id: req.body._id },
+    function (err, result) {
+      if (err) throw err;
+      console.log("deleted");
+      res.status(200).json(result);
+    }
+  );
+});
 
 // 재료 인식 결과 추가하기
 // check를 0으로 해야 냉장고로 들어감
@@ -175,7 +169,7 @@ router.post("/list", async (req, res) => {
   const body = req.body;
   var list = [];
   // 객체 만들기
-  for (var l = 0; l < body.length; l++){
+  for (var l = 0; l < body.length; l++) {
     Users_Ingredients.updateOne(
       {
         _id: body[l]._id,
@@ -183,11 +177,12 @@ router.post("/list", async (req, res) => {
       },
       {
         $set: {
-        check: 0,
-        ing_frozen: body[l].ing_frozen,
-        ing_expir: body[l].ing_expir,
-      }
-      }, function(err, result) {
+          check: 0,
+          ing_frozen: body[l].ing_frozen,
+          ing_expir: body[l].ing_expir,
+        },
+      },
+      function (err, result) {
         if (err) throw err;
         console.log("update");
       }

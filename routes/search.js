@@ -5,7 +5,6 @@ const mongoose = require("mongoose");
 const Ingredient = require("../models/ingredients");
 const Users_Ingredients = require("../models/users_ingredients");
 
-
 // 재료 검색
 router.get("/", (req, res) => {
   const query = req.query;
@@ -52,24 +51,27 @@ router.delete("/list", async (req, res) => {
   //   })
   // })
   // if (req.body._id.match(/^[0-9a-fA-F]{24}$/)){
-    Users_Ingredients.findByIdAndDelete({_id: req.body._id}, function(err, result) {
+  Users_Ingredients.findByIdAndDelete(
+    { _id: req.body._id },
+    function (err, result) {
       if (err) throw err;
       console.log("deleted");
       res.status(200).json(result);
-    });
+    }
+  );
   // }
 });
 
 // 재료 검색한것 DB 추가
 router.post("/list", (req, res) => {
   const body = req.body;
-  var ObjectId = require('mongodb').ObjectID;
+  var ObjectId = require("mongodb").ObjectID;
   var list = [];
   console.log(body);
   // obj = ObjectId(body[0]._id);
   // console.log(body[0]._id);
   // ing의 id 찾아서 Users_Ingredients 객체의 ing에 삽입
-  for (var l = 0; l < body.length; l++){
+  for (var l = 0; l < body.length; l++) {
     Users_Ingredients.updateOne(
       {
         _id: body[l]._id,
@@ -77,11 +79,12 @@ router.post("/list", (req, res) => {
       },
       {
         $set: {
-        check: 0,
-        ing_frozen: body[l].ing_frozen,
-        ing_expir: body[l].ing_expir,
-      }
-      }, function(err, result) {
+          check: 0,
+          ing_frozen: body[l].ing_frozen,
+          ing_expir: body[l].ing_expir,
+        },
+      },
+      function (err, result) {
         if (err) throw err;
         console.log("update");
       }
