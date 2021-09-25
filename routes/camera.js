@@ -119,6 +119,7 @@ router.post("/add", async (req, res) => {
       .exec((err, data) => {
         if (err) throw err;
         console.log(data);
+        console.log(body.user_id);
         // console.log("l: " + l + " n:" + n);
 
         Users_Ingredients.create(
