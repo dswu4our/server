@@ -10,31 +10,40 @@ router.get("/", (req, res) => {
   console.log("User name : " + query.user_id);
   var ids = [];
   var ex = [];
-  Users_Ingredients.find(
-    {
-      user_id: query.user_id,
-      ing_frozen: query.ing_frozen,
-      check: 0,
-    },)
-  .select("ing_expir ing")
-  .exec((err, data) => {
-    if (err) throw err;
-    console.log(data);
-    for (var i = 0; i < data.length; i++)
-      ids.push(data[i].ing);
-    for (var i = 0; i < data.length; i++)
-      ex.push(data[i].ing_expir);
-    console.log(ids);
-    console.log(ex);
-    Ingredient.find()
-      .where("_id")
-      .in(ids)
-      .select("ing_name ing_expir ing_img")
-      .exec((err, result) => {
-        console.log(result);
-        res.status(200).json(result);
+  var ings = [];
+  var ing;
+  Users_Ingredients.find({
+    user_id: query.user_id,
+    ing_frozen: query.ing_frozen,
+    check: 0,
+  })
+    .select("ing_expir ing")
+    .exec((err, data) => {
+      if (err) throw err;
+      console.log(data);
+      for (var i = 0; i < data.length; i++) {
+        ids.push(data[i].ing);
+        ex.push(data[i].ing_expir);
+      }
+      // console.log(ids);
+      // console.log(ex);
+      Ingredient.find()
+        .where("_id")
+        .in(ids)
+        .select("ing_name ing_img")
+        .exec((err, result) => {
+          for (var i = 0; i < result.length; i++) {
+            ing = {
+              ing_name: result[i].ing_name,
+              ing_expir: ex[i],
+              ing_img: result[i].ing_img,
+            };
+            ings.push(ing);
+          }
+          // console.log(ings);
+          res.status(200).json(ings);
+        });
     });
-  });
 });
 
 // 요리하기

@@ -26,7 +26,7 @@ router.get("/", (req, res) => {
 // manage_edit_date
 router.post("/", (req, res) => {
   const body = req.body;
-  console.log(body);
+  // console.log(body);
   Users_Ingredients.updateOne(
     {
       _id: body._id,
@@ -40,6 +40,7 @@ router.post("/", (req, res) => {
     },
     function (err, result) {
       if (err) throw err;
+      // console.log(result);
       res.status(200).json("manage update success");
     }
   );
