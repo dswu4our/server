@@ -7,24 +7,21 @@ const { response } = require("express");
 var Youtube = require("youtube-node");
 var youtube = new Youtube();
 
-// 유투브 영상 리스트
-// 재료 선택 -> 요리하기
-/*router.post("/", (req, res) => {
+// 찜하기
+router.post("/myheart", async (req, res) => {
   const body = req.body;
 
-  console.log(body);
-
-  Recipe.find(
-    {
-      recipe_name: body.recipe_name
-    },
-    function (err, recipes) {
-      if (err) {
-        return res.status(500).send({ error: err.message });
-      }
-      res.status(200).json(recipes);
-    }).select("recipe_name");
-  }); */
+  Users_Recipes.findOneAndUpdate(
+    { user_id: req.body.user_id, recipe_name: req.body.recipe_name },
+    { $set: { recipe_ht: 1 } }
+  )
+    .then((result) => {
+      console.log("success : recipe_ht = 1");
+    })
+    .catch((err) => {
+      console.log("@@err : ", err);
+    });
+});
 
 // [유투브 영상으로 넘겨주기]
 router.post("/cook", (req, res) => {

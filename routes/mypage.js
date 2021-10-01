@@ -10,83 +10,99 @@ var youtube = new Youtube();
 
 // 마이페이지
 router.get("/", (req, res) => {
-    
-    const query = req.query;
-    console.log("user_id: " + query.user_id);
-    
-    User.find(
-      {
-        user_id: query.user_id
-      },
-        function (err, results) {
+  const query = req.query;
+  console.log("user_id: " + query.user_id);
+
+  User.find(
+    {
+      user_id: query.user_id,
+    },
+    function (err, results) {
       if (err) {
         return res.status(500).send({ error: err.message });
       }
       res.status(200).json(results);
-    }).select("email name user_id");
-  });
+    }
+  ).select("email name user_id");
+});
 
 // 요리내역
 router.get("/mycook", (req, res) => {
-    
-    const query = req.query;
-    console.log("user_id: " + query.user_id);
-    
-    Users_Recipes.find(
-      {
-        user_id: query.user_id
-      },
-        function (err, results) {
+  const query = req.query;
+
+  console.log("user_id: " + query.user_id);
+
+  Users_Recipes.find(
+    {
+      user_id: query.user_id,
+    },
+    function (err, results) {
       if (err) {
         return res.status(500).send({ error: err.message });
       }
       res.status(200).json(results);
-    }).select("recipe_check recipe_name");
+    }
+  ).select("recipe_check recipe_name");
 });
-
 
 // 요리내역 -> 레시피 선택 -> 링크
 router.post("/mycook", (req, res) => {
-    const body = req.body;
-    
-    console.log(body);
-  
-    youtube.setKey("AIzaSyCK0H1wFZltvI4093gwJoQ4Vh2atbZyTy8"); // API 키 입력
-    var limit = 5; // 출력 갯수
-    var url = "https://www.youtube.com/results?search_query=" + body.recipe_name;
+  const body = req.body;
 
-    youtube.search(body.recipe_name, limit, function (err, result) {
-        // 검색 실행
-        if (err) {
-          console.log(err);
-          return;
-        } // 에러일 경우 에러공지하고 빠져나감
-          console.log("URL : " + url);
-          console.log("-----------");
-      });
-           
-        res.end(url);
-    });
-    
+  console.log(body);
+
+  youtube.setKey("AIzaSyCK0H1wFZltvI4093gwJoQ4Vh2atbZyTy8"); // API 키 입력
+  var limit = 5; // 출력 갯수
+  var url = "https://www.youtube.com/results?search_query=" + body.recipe_name;
+
+  youtube.search(body.recipe_name, limit, function (err, result) {
+    // 검색 실행
+    if (err) {
+      console.log(err);
+      return;
+    } // 에러일 경우 에러공지하고 빠져나감
+    console.log("URL : " + url);
+    console.log("-----------");
+  });
+
+  res.end(url);
+});
+
 // 찜한 목록
 router.get("/myheart", (req, res) => {
-    
-    const query = req.query;
-    console.log("user_id: " + query.user_id);
-    
-    Users_Recipes.find(
-      {
-        user_id: query.user_id
-      },
-        function (err, results) {
+  const query = req.query;
+  console.log("user_id: " + query.user_id);
+
+  Users_Recipes.find(
+    {
+      user_id: query.user_id,
+    },
+    function (err, results) {
       if (err) {
         return res.status(500).send({ error: err.message });
       }
       res.status(200).json(results);
-    })
-    .where("recipe_ht").equals(1)
+    }
+  )
+    .where("recipe_ht")
+    .equals(1)
     .select("recipe_name");
 });
 
+// 찜 취소
+router.post("/myheart", async (req, res) => {
+  const body = req.body;
+
+  Users_Recipes.findOneAndUpdate(
+    { user_id: req.body.user_id, recipe_name: req.body.recipe_name },
+    { $set: { recipe_ht: 0 } }
+  )
+    .then((result) => {
+      console.log("success : recipe_ht = 0");
+    })
+    .catch((err) => {
+      console.log("@@err : ", err);
+    });
+});
 
 module.exports = router;
