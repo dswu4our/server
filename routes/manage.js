@@ -26,17 +26,21 @@ router.get("/", (req, res) => {
 // manage_edit_date
 router.post("/", (req, res) => {
   const body = req.body;
-  Users_Ingredients.find(
+  console.log(body);
+  Users_Ingredients.updateOne(
     {
+      _id: body._id,
       user_id: body.user_id,
-      ing_expir: body.ing_expir,
-      ing_frozen: body.ing_frozen,
     },
-    function (err) {
-      if (err) {
-        return res.status(500).send({ error: err.message });
-      }
-      res.status(200);
+    {
+      $set: {
+        ing_frozen: body.ing_frozen,
+        ing_expir: body.ing_expir,
+      },
+    },
+    function (err, result) {
+      if (err) throw err;
+      res.status(200).json("manage update success");
     }
   );
 });
