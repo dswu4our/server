@@ -16,7 +16,7 @@ router.get("/", (req, res) => {
     check: 0,
   })
     .populate("ing")
-    .select("ing_name ing_expir")
+    .select("ing_name ing_expir ing_frozen")
     .exec((err, data) => {
       console.log(data);
       res.status(200).json(data);
