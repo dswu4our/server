@@ -42,7 +42,10 @@ router.get("/mycook", (req, res) => {
       }
       res.status(200).json(results);
     }
-  ).select("recipe_check recipe_name");
+  )
+    .where("recipe_check")
+    .equals(1)
+    .select("recipe_name");
 });
 
 // 요리내역 -> 레시피 선택 -> 링크
@@ -90,7 +93,7 @@ router.get("/myheart", (req, res) => {
 });
 
 // 찜 취소
-router.post("/myheart", async (req, res) => {
+router.post("/myheart/cancel", async (req, res) => {
   const body = req.body;
 
   Users_Recipes.findOneAndUpdate(

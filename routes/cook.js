@@ -7,6 +7,24 @@ const { response } = require("express");
 var Youtube = require("youtube-node");
 var youtube = new Youtube();
 
+// check & ht 할 요리리스트 users_recipe에 추가하기
+router.post("/", (req, res) => {
+  const body = req.body;
+  Users_Recipes.insertMany(
+    {
+      user_id: body.user_id,
+      recipe_name: body.recipe_name,
+    },
+    function (err) {
+      if (err) {
+        return res.status(500).send({ error: err.message });
+      }
+      res.status(200);
+      console.log("success : insert users_recipe");
+    }
+  );
+});
+
 // 찜하기
 router.post("/myheart", async (req, res) => {
   const body = req.body;
@@ -15,7 +33,8 @@ router.post("/myheart", async (req, res) => {
     { user_id: req.body.user_id, recipe_name: req.body.recipe_name },
     { $set: { recipe_ht: 1 } }
   )
-    .then((result) => {
+    .then((res) => {
+      res.status(200);
       console.log("success : recipe_ht = 1");
     })
     .catch((err) => {
@@ -49,16 +68,34 @@ router.post("/cook", (req, res) => {
     console.log("-----------");
   });
 
-  res.end(url);
+  //res.end(url);
+
+  /*Users_Recipes.insertMany(
+    {
+      user_id: body.user_id,
+      recipe_name: body.recipe_name,
+    },
+    function (err) {
+      if (err) {
+        return res.status(500).send({ error: err.message });
+      }
+      res.status("users_recipes insert");
+    }
+  );*/
 
   // 해당 유저가 본 레시피 체크 (users_recipes의 recipe_check=1)
-  var myquery = { recipe_check: 0 };
-  var newvalues = { $set: { recipe_check: 1 } };
+  Users_Recipes.findOneAndUpdate(
+    { user_id: req.body.user_id, recipe_name: req.body.recipe_name },
+    { $set: { recipe_check: 1 } }
+  )
+    .then((res) => {
+      console.log("success : recipe_check = 1");
+    })
+    .catch((err) => {
+      console.log("@@err : ", err);
+    });
 
-  Users_Recipes.updateOne(myquery, newvalues, function (err, res) {
-    if (err) throw err;
-    console.log("1 document 수정 완료.");
-  });
+  res.end(url);
 });
 
 module.exports = router;
