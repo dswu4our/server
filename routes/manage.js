@@ -47,7 +47,7 @@ router.post("/", (req, res) => {
 });
 
 // 삭제하기
-router.delete("/", (req, res) => {
+router.delete("/", async (req, res) => {
   Users_Ingredients.findByIdAndDelete(
     { _id: req.body._id },
     function (err, result) {
@@ -87,7 +87,6 @@ router.post("/managebasket", (req, res) => {
   const body = req.body;
 
   // console.log(body);
-
   var list = [];
   for (var i = 0; i < body.length; i++) {
     const li = {
@@ -97,13 +96,13 @@ router.post("/managebasket", (req, res) => {
     list.push(li);
   }
 
-  // 문제: 중복은 create이 안됨
+  // 문제: 중복은 create이 안됨. 한번만 생성함.
   Users_Baskets.create(list, function (err, result) {
     if (err) {
       console.log(err);
       throw err;
     }
-    console.log("inserted");
+    // console.log("inserted");
     res.json("basket insert success");
   });
 });
@@ -120,6 +119,18 @@ router.get("/managebasket", (req, res) => {
     }
     res.status(200).json(results);
   }).select("ing_name");
+});
+
+// 장바구니 삭제하기
+router.delete("/managebasket", async (req, res) => {
+  Users_Baskets.findByIdAndDelete(
+    { _id: req.body._id },
+    function (err, result) {
+      if (err) throw err;
+      console.log("deleted");
+      res.status(200).json(result);
+    }
+  );
 });
 
 module.exports = router;

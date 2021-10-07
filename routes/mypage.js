@@ -54,6 +54,17 @@ router.post("/mycook", (req, res) => {
 
   console.log(body);
 
+  Users_Recipes.findOneAndUpdate({
+    recipe_name: body.recipe_name,
+    user_id: body.user_id
+  }, {
+    $set: { recipe_check: 1 }
+  }).then((res) => {
+    console.log("있음");
+  }).catch((err) => {
+    console.log(err);
+  })
+
   youtube.setKey("AIzaSyCK0H1wFZltvI4093gwJoQ4Vh2atbZyTy8"); // API 키 입력
   var limit = 5; // 출력 갯수
   var url = "https://www.youtube.com/results?search_query=" + body.recipe_name;
