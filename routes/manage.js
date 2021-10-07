@@ -86,7 +86,7 @@ router.get("/manageover", (req, res) => {
 router.post("/managebasket", (req, res) => {
   const body = req.body;
 
-  console.log(body);
+  // console.log(body);
 
   var list = [];
   for (var i = 0; i < body.length; i++) {
@@ -97,13 +97,29 @@ router.post("/managebasket", (req, res) => {
     list.push(li);
   }
 
+  // 문제: 중복은 create이 안됨
   Users_Baskets.create(list, function (err, result) {
-    if (err) throw err;
+    if (err) {
+      console.log(err);
+      throw err;
+    }
     console.log("inserted");
-    return;
+    res.json("basket insert success");
   });
+});
 
-  res.json("basket insert success");
+// 장바구니 보여주기
+router.get("/managebasket", (req, res) => {
+  const query = req.query;
+  Users_Baskets.find({
+    user_id: query.user_id,
+  },
+  function (err, results) {
+    if (err) {
+      return res.status(500).send({ error: err.message });
+    }
+    res.status(200).json(results);
+  }).select("ing_name");
 });
 
 module.exports = router;
