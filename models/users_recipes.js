@@ -6,15 +6,21 @@ var Schema = mongoose.Schema;
 const users_recipesSchema = new mongoose.Schema(
   {
     recipe_name: {
-    type: String,
+      type: String,
       required: true,
-      ref: "Recipe", required: true, unique: true },
-    user_id: { 
+      ref: "Recipe",
+      //required: true,
+      unique: true,
+    },
+    user_id: {
       type: Number,
       required: true,
-      ref: "User", required: true, unique: true },
-    recipe_check: { type: Number, required: true},
-    recipe_ht: { type: Number, required: true}
+      ref: "User",
+      //required: true,
+      unique: true,
+    },
+    recipe_check: { type: Number },
+    recipe_ht: { type: Number },
   },
   {
     timestamps: true,
