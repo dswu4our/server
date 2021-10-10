@@ -7,43 +7,51 @@ const { response } = require("express");
 var Youtube = require("youtube-node");
 var youtube = new Youtube();
 
-// check & ht 할 요리리스트 users_recipe에 추가하기
-router.post("/", (req, res) => {
+// [찜하기]
+router.post("/myheart", (req, res) => {
   const body = req.body;
-  Users_Recipes.insertMany(
+
+  Users_Recipes.exists(
     {
-      user_id: body.user_id,
-      recipe_name: body.recipe_name,
+      user_id: req.body.user_id,
+      recipe_name: req.body.recipe_name,
     },
-    function (err) {
-      if (err) {
-        return res.status(500).send({ error: err.message });
+    function (err, result) {
+      if (result == false) {
+        Users_Recipes.insertMany(
+          {
+            user_id: body.user_id,
+            recipe_name: body.recipe_name,
+            recipe_ht: 1,
+          },
+          function (err) {
+            if (err) {
+              return res.status(500).send({ error: err.message });
+            }
+            res.status(200);
+            console.log("success : insert users_recipe and ht");
+          }
+        );
+      } else {
+        Users_Recipes.findOneAndUpdate(
+          { user_id: req.body.user_id, recipe_name: req.body.recipe_name },
+          { $set: { recipe_ht: 1 } },
+          function (err) {
+            if (err) {
+              return res.status(500).send({ error: err.message });
+            }
+            res.status(200);
+            console.log("success : recipe_ht = 1");
+          }
+        );
+        //console.log("Result :", result);
       }
-      res.status(200);
-      console.log("success : insert users_recipe");
     }
   );
 });
 
-// 찜하기
-router.post("/myheart", async (req, res) => {
-  const body = req.body;
-
-  Users_Recipes.findOneAndUpdate(
-    { user_id: req.body.user_id, recipe_name: req.body.recipe_name },
-    { $set: { recipe_ht: 1 } }
-  )
-    .then((res) => {
-      res.status(200);
-      console.log("success : recipe_ht = 1");
-    })
-    .catch((err) => {
-      console.log("@@err : ", err);
-    });
-});
-
 // [유투브 영상으로 넘겨주기]
-router.post("/cook", (req, res) => {
+router.post("/list", (req, res) => {
   const body = req.body;
   //var word = req.body; // 검색어 지정
   var limit = 5; // 출력 갯수
@@ -68,33 +76,43 @@ router.post("/cook", (req, res) => {
     console.log("-----------");
   });
 
-  //res.end(url);
-
-  /*Users_Recipes.insertMany(
+  Users_Recipes.exists(
     {
-      user_id: body.user_id,
-      recipe_name: body.recipe_name,
+      user_id: req.body.user_id,
+      recipe_name: req.body.recipe_name,
     },
-    function (err) {
-      if (err) {
-        return res.status(500).send({ error: err.message });
+    function (err, result) {
+      if (result == false) {
+        Users_Recipes.insertMany(
+          {
+            user_id: body.user_id,
+            recipe_name: body.recipe_name,
+            recipe_check: 1,
+          },
+          function (err) {
+            if (err) {
+              return res.status(500).send({ error: err.message });
+            }
+            res.status(200);
+            console.log("success : insert users_recipe and check");
+          }
+        );
+      } else {
+        Users_Recipes.findOneAndUpdate(
+          { user_id: req.body.user_id, recipe_name: req.body.recipe_name },
+          { $set: { recipe_check: 1 } },
+          function (err) {
+            if (err) {
+              return res.status(500).send({ error: err.message });
+            }
+            res.status(200);
+            console.log("success : recipe_check = 1");
+          }
+        );
+        //console.log("Result :", result);
       }
-      res.status("users_recipes insert");
     }
-  );*/
-
-  // 해당 유저가 본 레시피 체크 (users_recipes의 recipe_check=1)
-  Users_Recipes.findOneAndUpdate(
-    { user_id: req.body.user_id, recipe_name: req.body.recipe_name },
-    { $set: { recipe_check: 1 } }
-  )
-    .then((res) => {
-      console.log("success : recipe_check = 1");
-    })
-    .catch((err) => {
-      console.log("@@err : ", err);
-    });
-
+  );
   res.end(url);
 });
 
