@@ -74,7 +74,6 @@ router.post("/mycook", (req, res) => {
 // 찜한 목록
 router.get("/myheart", (req, res) => {
   const query = req.query;
-  i9r6fytu;
   console.log("user_id: " + query.user_id);
 
   Users_Recipes.find(
