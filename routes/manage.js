@@ -87,14 +87,20 @@ router.post("/managebasket", (req, res) => {
   const body = req.body;
 
   // console.log(body);
-  var list = [];
-  for (var i = 0; i < body.length; i++) {
-    const li = {
-      user_id: body[i].user_id,
-      ing_name: body[i].ing_name,
-    };
-    list.push(li);
-  }
+  // 배열로 보내기
+  // var list = [];
+  // for (var i = 0; i < body.length; i++) {
+  //   const li = {
+  //     user_id: body[i].user_id,
+  //     ing_name: body[i].ing_name,
+  //   };
+  //   list.push(li);
+  // }
+
+  var list = {
+    user_id: body.user_id,
+    ing_name: body.ing_name
+  };
 
   // 문제: 중복은 create이 안됨. 한번만 생성함.
   Users_Baskets.create(list, function (err, result) {
