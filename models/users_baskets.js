@@ -5,7 +5,7 @@ var Schema = mongoose.Schema;
 const users_basketsSchema = new mongoose.Schema(
   {
     user_id: { type: Number, required: true, 
-      ref: "User" , required: true}, 
+      ref: "User"}, 
     ing_name: { type:String, 
       ref: "User"},
   },

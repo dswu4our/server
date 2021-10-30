@@ -97,6 +97,7 @@ router.post("/managebasket", (req, res) => {
   //   list.push(li);
   // }
 
+  // 필요한것: if 이미 있는 ing_name일 경우 있다고 알려주기
   var list = {
     user_id: body.user_id,
     ing_name: body.ing_name
@@ -116,6 +117,7 @@ router.post("/managebasket", (req, res) => {
 // 장바구니 보여주기
 router.get("/managebasket", (req, res) => {
   const query = req.query;
+  console.log(query);
   Users_Baskets.find({
     user_id: query.user_id,
   },
