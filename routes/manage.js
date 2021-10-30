@@ -3,7 +3,7 @@
 var express = require("express");
 var router = express.Router();
 
-const { schema } = require("../models/users_ingredients");
+const Ingredients = require("../models/ingredients");
 const Users_Ingredients = require("../models/users_ingredients");
 const Users_Baskets = require("../models/users_baskets");
 
@@ -61,7 +61,9 @@ router.delete("/", async (req, res) => {
 // 기한초과
 router.get("/manageover", (req, res) => {
   const query = req.query;
-
+  var ings = [];
+  var ing;
+  var ids = [];
   let today = new Date();
 
   console.log("User id : " + query.user_id);
@@ -70,16 +72,29 @@ router.get("/manageover", (req, res) => {
     {
       user_id: query.user_id,
     },
-    function (err, results) {
-      if (err) {
-        return res.status(500).send({ error: err.message });
-      }
-      res.status(200).json(results);
-    }
   )
     .where("ing_expir")
     .lt(today)
-    .select("ing_name");
+    .select(ing)
+    .exec((err, data) => {
+      if (err) throw err;
+      for (var i = 0; i < data.length; i++) {
+        ids.push(data[i].ing);
+      }
+      Ingredients.find()
+      .where("_id")
+      .in(ids)
+      .select("ing_name")
+      .exec((err, result) => {
+        for (var i = 0; i < result.length; i++) {
+          ing = {
+            ing_name: result[i].ing_name,
+          };
+          ings.push(ing);
+        }
+        res.status(200).json(ings);
+    });
+});
 });
 
 // 장바구니 담기
@@ -103,15 +118,31 @@ router.post("/managebasket", (req, res) => {
     ing_name: body.ing_name
   };
 
-  // 문제: 중복은 create이 안됨. 한번만 생성함.
-  Users_Baskets.create(list, function (err, result) {
-    if (err) {
-      console.log(err);
-      throw err;
+  Users_Baskets.findOneAndUpdate(
+    {
+      user_id: body.user_id,
+      ing_name: body.ing_name
+    },
+    { user_id: body.user_id,
+      ing_name: body.ing_name},
+    {new: true, upsert : true},
+    function (err, result) {
+      if (err) {
+        console.log(err);
+        throw err;
+      }
+      res.json("basket insert success");
     }
-    // console.log("inserted");
-    res.json("basket insert success");
-  });
+  );
+  // 문제: 중복은 create이 안됨. 한번만 생성함.
+//   Users_Baskets.create(list, function (err, result) {
+//     if (err) {
+//       console.log(err);
+//       throw err;
+//     }
+//     // console.log("inserted");
+//     res.json("basket insert success");
+//   });
 });
 
 // 장바구니 보여주기
