@@ -84,7 +84,7 @@ router.get("/manageover", (req, res) => {
       Ingredients.find()
       .where("_id")
       .in(ids)
-      .select("ing_name")
+      .select("_id ing_name")
       .exec((err, result) => {
         for (var i = 0; i < result.length; i++) {
           ing = {
