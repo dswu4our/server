@@ -46,14 +46,15 @@ router.post("/", (req, res) => {
 
 // 삭제하기
 router.delete("/", async (req, res) => {
-  Users_Ingredients.findByIdAndDelete(
-    { _id: req.body._id },
-    function (err, result) {
-      if (err) throw err;
-      console.log("deleted");
-      res.status(200).json(result);
-    }
-  );
+  if (!req.body) {
+    return res.status(400).send({ message: "Data is empty!" });
+  }
+  const id = req.body._id;
+  Users_Ingredients.findByIdAndRemove({ _id: id }, function (err, result) {
+    if (err) throw err;
+    console.log(id);
+    res.json("Users_Ingredients deleted");
+  });
 });
 
 // 기한초과
